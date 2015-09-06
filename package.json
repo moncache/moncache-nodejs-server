@@ -1,0 +1,33 @@
+{
+  "name": "moncache-server",
+  "version": "1.0.0",
+  "description": "MonCache Server",
+  "author": "Maks Atygaev <jxcoder@ya.ru>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moncache/moncache-nodejs-server"
+  },
+  "bugs": {
+    "url": "https://github.com/moncache/moncache-nodejs-server/issues"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "~4.9.x",
+    "body-parser": "1.13.1",
+    "mongodb": "^2.0.42"
+  },
+  "devDependencies": {
+    "jsdoc": "3.3.2"
+  },
+  "engines": {
+    "node": "0.10.0"
+  },
+  "keywords": [
+    "moncache",
+    "mongodb",
+    "server"
+  ],
+  "license": "MIT"
+}
