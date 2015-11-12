@@ -2,7 +2,7 @@ var driver = 'mongodb';
 
 process.argv.forEach(function(value, index, array) {
   if (value == 'moncache') {
-    driver = './mongodb';
+    driver = 'moncache-driver';
   }
 });
 

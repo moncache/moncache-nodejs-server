@@ -16,7 +16,8 @@
   "dependencies": {
     "express": "~4.9.x",
     "body-parser": "1.13.1",
-    "mongodb": "^2.0.42"
+    "mongodb": "^2.0.42",
+    "moncache-driver": "0.0.1"
   },
   "devDependencies": {
     "jsdoc": "3.3.2"
