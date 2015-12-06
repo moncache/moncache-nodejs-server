@@ -8,15 +8,15 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 
-var APIs = [
-  require('./src/api.offices'),
-  require('./src/api.goods')
+var gateways = [
+  require('./src/gateway.offices'),
+  require('./src/gateway.products')
 ];
 
-APIs.forEach(function(API) {
-  API.initialize(app);
+gateways.forEach(function(gateway) {
+  gateway.initialize(app);
 });
 
-app.listen(app.get('port'), /*'198.211.126.144',*/ function() {
+app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
