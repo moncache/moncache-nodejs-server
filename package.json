@@ -11,13 +11,19 @@
     "url": "https://github.com/moncache/moncache-nodejs-server/issues"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha"
   },
   "dependencies": {
-    "express": "~4.9.x",
+    "bluebird": "^3.0.6",
     "body-parser": "1.13.1",
+    "data.maybe": "^1.2.1",
+    "express": "~4.9.x",
+    "frisby": "^0.8.5",
+    "moncache-driver": "0.0.4",
     "mongodb": "^2.0.42",
-    "moncache-driver": "0.0.1"
+    "unirest": "^0.4.2",
+    "winston": "^2.1.1"
   },
   "devDependencies": {
     "jsdoc": "3.3.2"
