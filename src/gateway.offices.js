@@ -41,6 +41,20 @@ module.exports = {
       };
     };
 
+    app.delete('/offices', function(request, response) {
+      MongoClient.connect(MongoURL, function(error, db) {
+        console.log('[?]', error);
+
+        db.collection('offices').deleteMany({}, function(error, result) {
+          console.log('[!]', error, result);
+
+          db.close();
+
+          response.send(204);
+        });
+      });
+    });
+
     app.post('/offices', function(request, response) {
       console.log('[TRACE]', 'OfficesAPI @ { POST /offices }', {request: request.body});
 
@@ -80,7 +94,11 @@ module.exports = {
 
                   response.status(500).send({error: 'Office saving problem'});
                 } else {
-                  response.status(201).send({officeId: office.id});
+                  if (dbResponse.insertedCount == 1) {
+                    response.status(201).send({officeId: office.id});
+                  } else {
+                    response.status(500).send({error: 'Office saving problem'});
+                  }
                 }
               });
             }
