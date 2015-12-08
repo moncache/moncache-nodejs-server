@@ -1,10 +1,12 @@
 var Maybe = require('data.maybe');
 
 var mongodb = {
+  name: 'MongoDB',
   MongoClient: require('mongodb').MongoClient
 };
 
 var moncache = {
+  name: 'MonCache',
   MongoClient: require('moncache-driver').MongoClient
 };
 
