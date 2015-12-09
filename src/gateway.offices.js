@@ -8,8 +8,6 @@ module.exports = {
         address: request.body.address
       };
 
-      console.log(request.body);
-
       db.save(office).then(function(isOk) {
         if (isOk) {
           response.status(201).send({officeId: office.id});
