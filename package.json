@@ -18,6 +18,7 @@
     "bluebird": "^3.0.6",
     "body-parser": "1.13.1",
     "data.maybe": "^1.2.1",
+    "ejs": "^2.3.4",
     "express": "~4.9.x",
     "frisby": "^0.8.5",
     "moncache-driver": "0.0.4",
