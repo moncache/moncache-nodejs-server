@@ -1,16 +1,8 @@
+var events = require('./context.events');
+
 var Promise = require('bluebird');
 
 var dbClient = Promise.promisifyAll(require('./mongodb.provider').getDefault().MongoClient);
-
-var connection = null;
-
-module.exports = function openConnection() {
-  if (!connection) {
-    connection = dbClient.connectAsync(require('./mongodb.configuration').URL);
-  }
-
-  return connection;
-}
 
 function openConnection(storage) {
   return dbClient.connectAsync(require('./mongodb.configuration').URL).then(function(db) {
@@ -19,6 +11,10 @@ function openConnection(storage) {
 }
 
 function DB() {}
+
+events.on('db.change', function() {
+  dbClient = Promise.promisifyAll(require('./mongodb.provider').getDefault().MongoClient);
+});
 
 DB.count = function(storage) {
   return openConnection(storage).then(function(collection) {
