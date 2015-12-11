@@ -1,3 +1,5 @@
+var events = require('./context.events');
+
 var MongoProvider = require('./mongodb.provider');
 
 module.exports = {
@@ -9,14 +11,14 @@ module.exports = {
     app.put('/configuration/:name', function(request, response) {
       switch (request.params.name) {
         case 'mongodb':
-          MongoProvider.setDefault(MongoProvider.getMongoDB());
+          events.emit('configuration.change', 'mongodb');
 
           response.status(204).end();
 
           break;
 
         case 'moncache':
-          MongoProvider.setDefault(MongoProvider.getMonCache());
+          events.emit('configuration.change', 'moncache');
 
           response.status(204).end();
 
