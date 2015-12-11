@@ -1,5 +1,7 @@
 var Maybe = require('data.maybe');
 
+var events = require('./context.events');
+
 var mongodb = {
   name: 'MongoDB',
   MongoClient: require('mongodb').MongoClient
@@ -29,5 +31,24 @@ MongoProvider.getDefault = function() {
 MongoProvider.setDefault = function(provider) {
   MongoProvider.DEFAULT = Maybe.fromNullable(provider);
 }
+
+events.on('configuration.change', function(name) {
+  switch (name.toLowerCase()) {
+    case 'mongodb':
+      console.log('[Provider]', 'Switch to MongoDB');
+
+      MongoProvider.setDefault(MongoProvider.getMongoDB());
+
+      break;
+
+     case 'moncache':
+      console.log('[Provider]', 'Switch to MonCache');
+
+      MongoProvider.setDefault(MongoProvider.getMonCache());
+
+      break;
+    }
+  }
+);
 
 module.exports = MongoProvider;
