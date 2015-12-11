@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 
+app.set('view engine', 'ejs');
 app.set('port', (process.env.PORT || 5000));
 
 app.use(bodyParser.urlencoded());
@@ -20,4 +21,8 @@ gateways.forEach(function(gateway) {
 
 app.listen(app.get('port'), '198.211.126.144', function() {
   console.log('Node app is running on port', app.get('port'));
+});
+
+app.get('/portal', function(request, response) {
+  response.render('portal.ejs');
 });
