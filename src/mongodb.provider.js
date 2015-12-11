@@ -39,12 +39,16 @@ events.on('configuration.change', function(name) {
 
       MongoProvider.setDefault(MongoProvider.getMongoDB());
 
+      events.emit('db.change');
+
       break;
 
      case 'moncache':
       console.log('[Provider]', 'Switch to MonCache');
 
       MongoProvider.setDefault(MongoProvider.getMonCache());
+
+      events.emit('db.change');
 
       break;
     }
