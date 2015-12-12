@@ -26,3 +26,17 @@ app.listen(app.get('port'), '198.211.126.144', function() {
 app.get('/portal', function(request, response) {
   response.render('portal.ejs');
 });
+
+[
+  'dashboard',
+  'offices/list',
+  'offices/form',
+  'products/list',
+  'products/form',
+  'orders/list',
+  'orders/form'
+].forEach(function(path) {
+  app.get('/content/' + path, function(request, response) {
+    response.render('content.' + path.replace(/\//g, '.')  + '.ejs');
+  }); 
+});
