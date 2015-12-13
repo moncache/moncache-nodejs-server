@@ -1,5 +1,21 @@
 <h1>PRODUCTS</h1>
 
-<p>
-  <button id="create-product-button" type="button" class="btn btn-primary">Create</button>
-</p>
+<div ng-show="products.length == 0" class="jumbotron ng-hide">
+  <h1>You have no products</h1>
+  <p>Don't worry! :) You can create product right now - just click on "Create product" button! :)</p>
+  <p>
+    <a class="btn btn-lg btn-primary" href="#/products/form" role="button">Create product &raquo;</a>
+  </p>
+</div>
+
+<div ng-show="products.length > 0" style="margin-top: 10px; margin-bottom: 10px;">
+  <button ng-click="openForm()" type="button" class="btn btn-primary">Create</button>
+</div>
+
+<ul ng-show="products.length > 0" class="list-group" ng-repeat="product in products">
+  <li class="list-group-item">
+    <span style="color: #577492">{{product.name}}</span>
+    <br/>
+    <span style="color: #67655D">{{product.cost.rubles}}.{{product.cost.kopeks}}</span>
+  </li>
+</ul>
