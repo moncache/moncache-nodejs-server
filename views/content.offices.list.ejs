@@ -1,1 +1,17 @@
 <h1>OFFICES</h1>
+
+<div ng-controller="OfficesCtrl">
+
+<div>
+  <button ng-click="openForm()" id="create-office-button" type="button" class="btn btn-primary">Create</button>
+</div>
+
+<ul id="offices" class="list-group" ng-repeat="office in offices">
+  <li class="list-group-item">
+    <span style="color: #577492">{{office.name}}</span>
+    <br/>
+    <span style="color: #67655D">{{office.address}}</span>
+  </li>
+</ul>
+
+</div>
