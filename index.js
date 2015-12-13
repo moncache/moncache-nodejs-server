@@ -1,3 +1,5 @@
+var MongoProvider = require('./src/mongodb.provider');
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -24,7 +26,7 @@ app.listen(app.get('port'), '198.211.126.144', function() {
 });
 
 app.get('/portal', function(request, response) {
-  response.render('portal.ejs');
+  response.render('portal.ejs', {configuration: MongoProvider.getDefault().name});
 });
 
 [
