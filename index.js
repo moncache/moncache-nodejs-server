@@ -30,6 +30,7 @@ app.get('/portal', function(request, response) {
 });
 
 [
+  'configuration',
   'dashboard',
   'offices/list',
   'offices/form',
@@ -39,6 +40,12 @@ app.get('/portal', function(request, response) {
   'orders/form'
 ].forEach(function(path) {
   app.get('/content/' + path, function(request, response) {
-    response.render('content.' + path.replace(/\//g, '.')  + '.ejs');
+    var data = {};
+
+    if (path == 'configuration') {
+      data.configuration = MongoProvider.getDefault().name;
+    }
+
+    response.render('content.' + path.replace(/\//g, '.')  + '.ejs', data);
   }); 
 });
