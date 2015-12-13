@@ -39,6 +39,18 @@
       }
     });
 
+    coffeeway.controller('ProductsCtrl', function($scope, $location, $http) {
+      $http.get('/products').then(function(response) {
+        $scope.products = response.data.products;
+
+        return response.data.offices;
+      });
+
+      $scope.openForm = function() {
+        $location.path('/products/form');
+      }
+    });
+
     coffeeway.config(function($routeProvider) {
       $routeProvider
       .when('/dashboard', {
@@ -61,7 +73,7 @@
       })
       .when('/products', {
         templateUrl: '/content/products/list',
-        controller: 'AppController',
+        controller: 'ProductsCtrl',
         section: 'products',
         title: 'Products'
       })
@@ -109,7 +121,7 @@
             <li id="navigation-item-orders"><a href="#/orders">Orders</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#/quit">Sign Out</a></li>
+            <li><a href="#/configuration"><b><%= configuration %></b></a></li>
         </ul>
         </div><!--/.nav-collapse -->
       </div>
