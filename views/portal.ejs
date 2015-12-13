@@ -27,6 +27,20 @@
 
     coffeeway.controller('AppController', function($scope) {});
 
+    coffeeway.controller('ConfigurationCtrl', function($scope, $http) {
+      $scope.switchToMongoDB = function() {
+        return $http.put('/configuration/mongodb').then(function(response) {
+          return location.reload(true);
+        });
+      }
+
+      $scope.switchToMonCache = function() {
+        return $http.put('/configuration/moncache').then(function(response) {
+          return location.reload(true);
+        });
+      }
+    });
+
     coffeeway.controller('OfficesCtrl', function($scope, $location, $http) {
       $http.get('/offices').then(function(response) {
         $scope.offices = response.data.offices;
@@ -53,6 +67,12 @@
 
     coffeeway.config(function($routeProvider) {
       $routeProvider
+      .when('/configuration', {
+        templateUrl: '/content/configuration',
+        controller: 'ConfigurationCtrl',
+        section: 'configuration',
+        title: 'Configuration'
+      })
       .when('/dashboard', {
         templateUrl: '/content/dashboard',
         controller: 'AppController',
@@ -121,7 +141,7 @@
             <li id="navigation-item-orders"><a href="#/orders">Orders</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#/configuration"><b><%= configuration %></b></a></li>
+            <li id="navigation-item-configuration"><a href="#/configuration"><b><%= configuration %></b></a></li>
         </ul>
         </div><!--/.nav-collapse -->
       </div>
