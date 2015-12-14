@@ -13,6 +13,7 @@ app.use(bodyParser.text());
 
 var gateways = [
   require('./src/gateway.configuration'),
+  require('./src/gateway.dashboard'),
   require('./src/gateway.offices'),
   require('./src/gateway.products')
 ];
