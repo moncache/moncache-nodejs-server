@@ -1,1 +1,18 @@
 <h1>PRODUCTS / FORM</h1>
+
+<form role="form">
+  <div class="form-group">
+    <label for="name">Name:</label>
+    <input id="name" ng-model="product.name" ng-value="product.name" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="address">Cost (rubles):</label>
+    <input id="address" ng-model="product.cost.rubles" ng-value="product.cost.rubles" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="address">Cost (kopeks):</label>
+    <input id="address" ng-model="product.cost.kopeks" ng-value="product.cost.kopeks" type="text" class="form-control">
+  </div>
+  <input type="hidden" ng-model="product.id" ng-value="product.id">
+  <button ng-click="submitForm(product)" type="submit" class="btn btn-default">Ok</button>
+</form>

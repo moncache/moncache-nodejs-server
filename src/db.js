@@ -4,20 +4,20 @@ var Promise = require('bluebird');
 
 var dbClient = Promise.promisifyAll(require('./mongodb.provider').getDefault().MongoClient);
 
-function openConnection(storage) {
+events.on('db.change', function() {
+  dbClient = Promise.promisifyAll(require('./mongodb.provider').getDefault().MongoClient);
+});
+
+function DB() {}
+
+DB.openConnection = function(storage) {
   return dbClient.connectAsync(require('./mongodb.configuration').URL).then(function(db) {
     return Promise.promisifyAll(db.collection(storage));
   });
 }
 
-function DB() {}
-
-events.on('db.change', function() {
-  dbClient = Promise.promisifyAll(require('./mongodb.provider').getDefault().MongoClient);
-});
-
 DB.count = function(storage) {
-  return openConnection(storage).then(function(collection) {
+  return this.openConnection(storage).then(function(collection) {
     return collection.countAsync({}).then(function(count) {
       return count;
     });
@@ -25,7 +25,7 @@ DB.count = function(storage) {
 }
 
 DB.save = function(storage, data) {
-  return openConnection(storage).then(function(collection) {
+  return this.openConnection(storage).then(function(collection) {
     return collection.countAsync({}).then(function(count) {
       return [ collection, count ];
     });
@@ -50,8 +50,8 @@ DB.find = function(storage) {
 
   var dataId = arguments[1];
 
-  return openConnection(storage).then(function(collection) {
-    if (dataId) {
+  return this.openConnection(storage).then(function(collection) {
+    if (typeof(dataId) != 'undefined') {
       return collection.findOneAsync({id: dataId}, projection).then(function(data) {
         return data;
       });
@@ -66,7 +66,7 @@ DB.find = function(storage) {
 }
 
 DB.update = function(storage, data) {
-  return openConnection(storage).then(function(collection) {
+  return this.openConnection(storage).then(function(collection) {
     var query = {
       id: data.id
     };
@@ -92,10 +92,10 @@ DB.update = function(storage, data) {
 DB.remove = function(storage) {
   var dataId = arguments[1];
 
-  return openConnection(storage).then(function(collection) {
+  return this.openConnection(storage).then(function(collection) {
     var field = 'deletedCount';
 
-    if (dataId) {
+    if (typeof(dataId) != 'undefined') {
       return collection.deleteOne({id: dataId}).then(function(result) {
         return result.hasOwnProperty(field) && (result[field] == 1);
       });

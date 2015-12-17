@@ -1,30 +1,40 @@
-var db = require('./db').on('orders');
+var DB = require('./db');
+
+var db = DB.on('orders');
+
+var Promise = require('bluebird');
 
 db.findByMonth = function() {
-  return db.find().then(function(orders) {
-    var now = new Date();
+  var now = new Date();
 
-    var startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  var startDate = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    var startTime = startDate.getTime();
+  var startTime = startDate.getTime();
 
-    var endDate = now;
+  var endDate = now;
 
-    var endTime = endDate.getTime();
+  var endTime = endDate.getTime();
 
-    var filteredOrders = [];
-
-    for (var i = 0; i < orders.length; i++) {
-      var order = orders[i];
-
-      var orderTime = order.time;
-
-      if ((startTime <= orderTime) && (orderTime <= endTime)) {
-        filteredOrders.push(order);
+  return DB.openConnection('orders').then(function(collection) {
+    return collection;
+  })
+  .then(function(collection) {
+    var query = {
+      time: {
+        $gt: startTime,
+        $lt: endTime
       }
-    }
+    };
 
-    return filteredOrders;
+    var projection = {
+      _id: false
+    };
+
+    return collection.findAsync(query, projection).then(function(result) {
+      return Promise.promisifyAll(result).toArrayAsync().then(function(orders) {
+        return orders;
+      });
+    });
   });
 }
 
