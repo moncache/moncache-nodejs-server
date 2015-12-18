@@ -81,7 +81,7 @@ DB.update = function(storage, data) {
       }
     });
 
-    return collection.updateOne(query, modifications).then(function(result) {
+    return collection.updateOneAsync(query, modifications).then(function(result) {
       var field = 'modifiedCount';
 
       return result.hasOwnProperty(field) && (result[field] == 1);
@@ -96,12 +96,12 @@ DB.remove = function(storage) {
     var field = 'deletedCount';
 
     if (typeof(dataId) != 'undefined') {
-      return collection.deleteOne({id: dataId}).then(function(result) {
+      return collection.deleteOneAsync({id: dataId}).then(function(result) {
         return result.hasOwnProperty(field) && (result[field] == 1);
       });
     }
 
-    return collection.deleteMany({}).then(function(result) {
+    return collection.deleteManyAsync({}).then(function(result) {
       return result.hasOwnProperty(field) && (result[field] >= 0);
     });
   });
