@@ -2,6 +2,8 @@ var Maybe = require('data.maybe');
 
 var events = require('./context.events');
 
+var logger = require('./context.logger')('Provider');
+
 var mongodb = {
   name: 'MongoDB',
   MongoClient: require('mongodb').MongoClient
@@ -25,18 +27,20 @@ MongoProvider.getMonCache = function() {
 }
 
 MongoProvider.getDefault = function() {
-  return (MongoProvider.DEFAULT).getOrElse(MongoProvider.getMongoDB());
+  return (MongoProvider.DEFAULT).getOrElse(MongoProvider.getMonCache());
 }
 
 MongoProvider.setDefault = function(provider) {
+  logger.info('Switch to "' + provider.name + '"');
+
   MongoProvider.DEFAULT = Maybe.fromNullable(provider);
 }
 
 events.on('configuration.change', function(name) {
+  logger.info('Handled event "configuration.change" --> ' + name);
+
   switch (name.toLowerCase()) {
     case 'mongodb':
-      console.log('[Provider]', 'Switch to MongoDB');
-
       MongoProvider.setDefault(MongoProvider.getMongoDB());
 
       events.emit('db.change');
@@ -44,8 +48,6 @@ events.on('configuration.change', function(name) {
       break;
 
      case 'moncache':
-      console.log('[Provider]', 'Switch to MonCache');
-
       MongoProvider.setDefault(MongoProvider.getMonCache());
 
       events.emit('db.change');
