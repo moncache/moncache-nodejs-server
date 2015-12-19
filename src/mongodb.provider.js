@@ -27,7 +27,7 @@ MongoProvider.getMonCache = function() {
 }
 
 MongoProvider.getDefault = function() {
-  return (MongoProvider.DEFAULT).getOrElse(MongoProvider.getMonCache());
+  return (MongoProvider.DEFAULT).getOrElse(MongoProvider.getMongoDB());
 }
 
 MongoProvider.setDefault = function(provider) {
