@@ -22,7 +22,7 @@
     "express": "~4.9.x",
     "frisby": "^0.8.5",
     "intel": "^1.1.0",
-    "moncache-driver": "0.0.4",
+    "moncache-driver": "0.0.6",
     "mongodb": "^2.0.42",
     "unirest": "^0.4.2",
     "winston": "^2.1.1"
