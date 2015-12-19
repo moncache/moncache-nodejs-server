@@ -9,5 +9,5 @@ process.argv.forEach(function(value, index, array) {
 module.exports = {
   MongoClient: require(driver).MongoClient,
   ObjectId: require('mongodb').ObjectId,
-  URL: 'mongodb://127.0.0.1:27017/server_nodejs'
+  URL: 'mongodb://127.0.0.1:27017/moncache_server_nodejs'
 };
