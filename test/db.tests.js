@@ -7,8 +7,6 @@ Configuration.URL += '_tests';
 
 var MongoProvider = require('../src/mongodb.provider');
 
-console.log(require('../src/mongodb.configuration'));
-
 describe('DB', function() {
 
   function testSFUR(name, db, data, modificator) {
@@ -65,7 +63,13 @@ describe('DB', function() {
       });
       }
 
-      return sfur();
+      MongoProvider.setDefault(MongoProvider.getMongoDB());
+
+      return sfur().then(function() {
+        MongoProvider.setDefault(MongoProvider.getMonCache());
+
+        return sfur();
+      });
     });
   }
 
