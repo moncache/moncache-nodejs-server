@@ -207,6 +207,60 @@
       }
     });
 
+    coffeeway.controller('OrdersCtrl', function($scope, $location, $http) {
+      $http.get('/orders').then(function(response) {
+        $scope.orders = response.data.orders;
+
+        return response.data.orders;
+      });
+
+      $scope.openForm = function() {
+        $location.path('/orders/form');
+      }
+
+      $scope.remove = function(orderId) {
+        return $http.delete('/orders/' + orderId).then(function(response) {
+          return location.reload(true);
+        });
+      }
+    });
+
+    coffeeway.controller('OrderFormCtrl', function($scope, $location, $http) {
+      var orderIdSearch = $location.path().match(/\/orders\/\d+/);
+
+      if (orderIdSearch != null) {
+        var orderId = orderIdSearch[0].substring('/orders/'.length);
+
+        $http.get('/orders/' + orderId).then(function(response) {
+          var order = response.data.order;
+
+          if (order == null) {
+            $location.path('/orders');
+          } else {
+            $scope.order = order;
+          }
+        });
+      }
+
+      $scope.submitForm = function(office) {
+        var isModification = office.hasOwnProperty('id');
+
+        $http({
+          method: isModification ? 'PUT' : 'POST',
+          url: '/offices' + (isModification ? '/' + office.id : ''),
+          data: JSON.stringify({
+            name: office.name,
+            address: office.address
+          }),
+          headers: {
+            "Content-Type": 'application/json'
+          }
+        }).then(function() {
+          $location.path("/offices");
+        });
+      }
+    });
+
     coffeeway.controller('OfficeFormCtrl', function($scope, $location, $http) {
       var officeIdSearch = $location.path().match(/\/offices\/\d+/);
 
@@ -358,13 +412,13 @@
       })
       .when('/orders', {
         templateUrl: '/content/orders/list',
-        controller: 'AppController',
+        controller: 'OrdersCtrl',
         section: 'orders',
         title: 'Orders'
       })
       .when('/orders/form', {
         templateUrl: '/content/orders/form',
-        controller: 'AppController',
+        controller: 'OrderFormCtrl',
         section: 'orders',
         title: 'Order form'
       })

@@ -1,5 +1,25 @@
 <h1>ORDERS</h1>
 
-<p>
-  <button id="create-order-button" type="button" class="btn btn-primary">Create</button>
-</p>
+<div ng-show="orders.length == 0" class="jumbotron ng-hide">
+  <h1>You have no orders</h1>
+  <p>Don't worry! :) You can create order right now - just click on "Create order" button! :)</p>
+  <p>
+    <a class="btn btn-lg btn-primary" href="#/orders/form" role="button">Create order &raquo;</a>
+  </p>
+</div>
+
+<div ng-show="orders.length > 0" style="margin-top: 10px; margin-bottom: 10px">
+  <button ng-click="openForm()" type="button" class="btn btn-primary">Create</button>
+</div>
+
+<ul ng-show="orders.length > 0" class="list-group" ng-repeat="order in orders">
+  <li class="list-group-item">
+    <button ng-click="remove(order.id)" type="button" class="btn btn-primary pull-right" style="margin-right: 20px">Delete</button>
+
+    <span style="color: #577492">№{{order.id}} ({{order.office.name}})</span>
+    <br/>
+    <span>Total: {{order.total.rubles}}.{{order.total.kopeks}} rubles</span>
+  </li>
+</ul>
+
+</div>

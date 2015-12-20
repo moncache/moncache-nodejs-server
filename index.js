@@ -15,7 +15,8 @@ var gateways = [
   require('./src/gateway.configuration'),
   require('./src/gateway.dashboard'),
   require('./src/gateway.offices'),
-  require('./src/gateway.products')
+  require('./src/gateway.products'),
+  require('./src/gateway.orders')
 ];
 
 gateways.forEach(function(gateway) {
