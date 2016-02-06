@@ -1,0 +1,26 @@
+<h1>OFFICES</h1>
+
+<div ng-show="offices.length == 0" class="jumbotron ng-hide">
+  <h1>You have no offices</h1>
+  <p>Don't worry! :) You can create office right now - just click on "Create office" button! :)</p>
+  <p>
+    <a class="btn btn-lg btn-primary" href="#/offices/form" role="button">Create office &raquo;</a>
+  </p>
+</div>
+
+<div ng-show="offices.length > 0" style="margin-top: 10px; margin-bottom: 10px">
+  <button ng-click="openForm()" type="button" class="btn btn-primary">Create</button>
+</div>
+
+<ul ng-show="offices.length > 0" class="list-group" ng-repeat="office in offices">
+  <li class="list-group-item">
+    <button ng-click="remove(office.id)" type="button" class="btn btn-primary pull-right">Delete</button>
+    <button ng-click="change(office.id)" type="button" class="btn btn-primary pull-right" style="margin-right: 20px">Change</button>
+
+    <span style="color: #577492">{{office.name}}</span>
+    <br/>
+    <span style="color: #67655D">{{office.address}}</span>
+  </li>
+</ul>
+
+</div>

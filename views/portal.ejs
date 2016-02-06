@@ -1,0 +1,461 @@
+<!doctype html>
+<html ng-app="coffeeway">
+<head>
+  <title ng-bind="'CoffeeWay :: ' + $root.title">CoffeeWay</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha256-KXn5puMvxCw+dAYznun+drMdG1IFl3agK0p/pqT9KAo= sha512-2e8qq0ETcfWRI4HJBzQiA3UoyFk6tbNyG+qSaIBZLyW9Xf3sWZHN/lxe9fTh1U45DpPf07yj94KsUHHWe4Yk1A==" crossorigin="anonymous"></script>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular.min.js"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular-route.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+  <script type="text/javascript">
+    var coffeeway = angular.module('coffeeway', ['ngRoute']);
+
+    coffeeway.run(['$location', '$rootScope', function($location, $rootScope) {
+      $rootScope.$on('$routeChangeSuccess', function(event, current, previous) {
+        if (current.hasOwnProperty('$$route')) {
+          $rootScope.title = current.$$route.title;
+
+          $rootScope.section = current.$$route.section;
+
+          $('#navbar li.active').removeClass('active');
+
+          $('#navigation-item-' + $rootScope.section).addClass('active');
+        }
+      });
+    }]);
+
+    coffeeway.controller('AppController', function($scope) {});
+
+    coffeeway.controller('DashboardCtrl', function($scope, $timeout, $http) {
+      $http.get('/dashboard/orders').then(function(response) {
+        var data = response.data.data;
+
+        var noData = true;
+
+        for (var i = 0; i < data.length; i++) {
+          if ((data[i].total.rubles != 0) || (data[i].total.kopeks != 0)) {
+            noData = false;
+
+            break;
+          }
+        }
+
+        $scope.noData = noData;
+      });
+
+      $timeout(function() {
+        $http.get('/dashboard/products').then(function(response) {
+          return response.data.data;
+        })
+        .then(function(productsData) {
+          var bestProductsColors = ['#009688', '#26a69a', '#4db6ac', '#80cbc4', '#b2dfdb'];
+
+          var poorProductsColors = ['#ffebee', '#ffcdd2', '#ef9a9a', '#e57373', '#ef5350'];
+
+          var bestProductsCount = bestProductsColors.length;
+
+          var poorProductsCount = poorProductsColors.length;
+
+          var leftFringe = bestProductsCount;
+
+          var rightFringe = productsData.length > poorProductsCount ? productsData.length - poorProductsCount : 0;
+
+          var bestProducts = productsData.slice(0, leftFringe);
+
+          var poorProducts = productsData.slice(rightFringe);
+
+          var otherProducts = productsData.slice(leftFringe, rightFringe);
+
+          var data = [];
+
+          for (var i = 0; i < bestProducts.length; i++) {
+            var dataItem = {
+              value: bestProducts[i].total,
+              label: bestProducts[i].product.name,
+              color: bestProductsColors[i]
+            };
+
+            data.push(dataItem);
+          }
+
+          var otherProductsDataItem = {
+            value: 0,
+            label: '< Others >',
+            color: '#EFEBE9'
+          };
+
+          for (var i = 0; i < otherProducts.length; i++) {
+            otherProductsDataItem.value += otherProducts[i].total;
+          }
+
+          data.push(otherProductsDataItem);
+
+          for (var i = 0; i < poorProducts.length; i++) {
+            var dataItem = {
+              value: poorProducts[i].total,
+              label: poorProducts[i].product.name,
+              color: poorProductsColors[i]
+            };
+
+            data.push(dataItem);
+          }
+
+          var chartProductsContext = document.getElementById('chart_products').getContext("2d");
+
+          var chartProducts = new Chart(chartProductsContext).Pie(data);
+        });
+
+
+        $http.get('/dashboard/offices').then(function(response) {
+          return response.data.data;
+        })
+        .then(function(officesData) {
+          var color = '33, 150, 243';
+
+          var data = {
+            labels: [],
+            datasets: [{
+              fillColor: 'rgba(' + color + ', 0.5)',
+              strokeColor: 'rgba(' + color + ', 0.8)',
+              highlightFill: 'rgba(' + color + ', 0.75)',
+              highlightStroke: 'rgba(' + color + ', 1)',
+              data: []
+            }]
+          };
+
+          for (var i = 0; i < officesData.length; i++) {
+            var officeData = officesData[i];
+
+            data.labels.push(officeData.office.name);
+
+            data.datasets[0].data.push(Math.round(officeData.total.rubles * 100 + officeData.total.kopeks) / 100);
+          }
+
+          var chartOfficesContext = document.getElementById('chart_offices').getContext("2d");
+
+          var chartOffices = new Chart(chartOfficesContext).Bar(data);
+        });
+
+        $http.get('/dashboard/orders').then(function(response) {
+          return response.data.data;
+        })
+        .then(function(ordersData) {
+          var color = '83, 109, 254';
+
+          var data = {
+            labels: [],
+            datasets: [{
+              fillColor: 'rgba(' + color + ', 0.5)',
+              strokeColor: 'rgba(' + color + ', 0.8)',
+              highlightFill: 'rgba(' + color + ', 0.75)',
+              highlightStroke: 'rgba(' + color + ', 1)',
+              data: []
+            }]
+          };
+
+          var now = new Date();
+
+          for (var i = 0; i < ordersData.length; i++) {
+            data.labels.push(ordersData[i].label);
+
+            data.datasets[0].data.push((ordersData[i].total.rubles * 100 + ordersData[i].total.kopeks) / 100);
+          }
+
+          var chartOrdersContext = document.getElementById('chart_orders').getContext("2d");
+
+          var chartOrders = new Chart(chartOrdersContext).Line(data);
+        });
+      });
+    });
+
+    coffeeway.controller('ConfigurationCtrl', function($scope, $http) {
+      $scope.switchToMongoDB = function() {
+        return $http.put('/configuration/mongodb').then(function(response) {
+          return location.reload(true);
+        });
+      }
+
+      $scope.switchToMonCache = function() {
+        return $http.put('/configuration/moncache').then(function(response) {
+          return location.reload(true);
+        });
+      }
+    });
+
+    coffeeway.controller('OfficesCtrl', function($scope, $location, $http) {
+      $http.get('/offices').then(function(response) {
+        $scope.offices = response.data.offices;
+
+        return response.data.offices;
+      });
+
+      $scope.openForm = function() {
+        $location.path('/offices/form');
+      }
+
+      $scope.change = function(officeId) {
+        $location.path('/offices/' + officeId + '/form');
+      }
+
+      $scope.remove = function(officeId) {
+        return $http.delete('/offices/' + officeId).then(function(response) {
+          return location.reload(true);
+        });
+      }
+    });
+
+    coffeeway.controller('OrdersCtrl', function($scope, $location, $http) {
+      $http.get('/orders').then(function(response) {
+        $scope.orders = response.data.orders;
+
+        return response.data.orders;
+      });
+
+      $scope.openForm = function() {
+        $location.path('/orders/form');
+      }
+
+      $scope.remove = function(orderId) {
+        return $http.delete('/orders/' + orderId).then(function(response) {
+          return location.reload(true);
+        });
+      }
+    });
+
+    coffeeway.controller('OrderFormCtrl', function($scope, $location, $http) {
+      var orderIdSearch = $location.path().match(/\/orders\/\d+/);
+
+      if (orderIdSearch != null) {
+        var orderId = orderIdSearch[0].substring('/orders/'.length);
+
+        $http.get('/orders/' + orderId).then(function(response) {
+          var order = response.data.order;
+
+          if (order == null) {
+            $location.path('/orders');
+          } else {
+            $scope.order = order;
+          }
+        });
+      }
+
+      $scope.submitForm = function(office) {
+        var isModification = office.hasOwnProperty('id');
+
+        $http({
+          method: isModification ? 'PUT' : 'POST',
+          url: '/offices' + (isModification ? '/' + office.id : ''),
+          data: JSON.stringify({
+            name: office.name,
+            address: office.address
+          }),
+          headers: {
+            "Content-Type": 'application/json'
+          }
+        }).then(function() {
+          $location.path("/offices");
+        });
+      }
+    });
+
+    coffeeway.controller('OfficeFormCtrl', function($scope, $location, $http) {
+      var officeIdSearch = $location.path().match(/\/offices\/\d+/);
+
+      if (officeIdSearch != null) {
+        var officeId = officeIdSearch[0].substring('/offices/'.length);
+
+        $http.get('/offices/' + officeId).then(function(response) {
+          var office = response.data.office;
+
+          if (office == null) {
+            $location.path('/offices');
+          } else {
+            $scope.office = office;
+          }
+        });
+      }
+
+      $scope.submitForm = function(office) {
+        var isModification = office.hasOwnProperty('id');
+
+        $http({
+          method: isModification ? 'PUT' : 'POST',
+          url: '/offices' + (isModification ? '/' + office.id : ''),
+          data: JSON.stringify({
+            name: office.name,
+            address: office.address
+          }),
+          headers: {
+            "Content-Type": 'application/json'
+          }
+        }).then(function() {
+          $location.path("/offices");
+        });
+      }
+    });
+
+    coffeeway.controller('ProductsCtrl', function($scope, $location, $http) {
+      $http.get('/products').then(function(response) {
+        $scope.products = response.data.products;
+
+        return response.data.offices;
+      });
+
+      $scope.openForm = function() {
+        $location.path('/products/form');
+      }
+
+      $scope.change = function(productId) {
+        $location.path('/products/' + productId + '/form');
+      }
+
+      $scope.remove = function(productId) {
+        return $http.delete('/products/' + productId).then(function(response) {
+          return location.reload(true);
+        });
+      }
+    });
+
+    coffeeway.controller('ProductFormCtrl', function($scope, $location, $http) {
+      var productIdSearch = $location.path().match(/\/products\/\d+/);
+
+      if (productIdSearch != null) {
+        var productId = productIdSearch[0].substring('/products/'.length);
+
+        $http.get('/products/' + productId).then(function(response) {
+          var product = response.data.product;
+
+          if (product == null) {
+            $location.path('/products');
+          } else {
+            $scope.product = product;
+          }
+        });
+      }
+
+      $scope.submitForm = function(product) {
+        console.log(product);
+
+        var isModification = product.hasOwnProperty('id');
+
+        $http({
+          method: isModification ? 'PUT' : 'POST',
+          url: '/products' + (isModification ? '/' + product.id : ''),
+          data: JSON.stringify({
+            name: product.name,
+            cost: {
+              rubles: parseInt(product.cost.rubles),
+              kopeks: parseInt(product.cost.kopeks)
+            }
+          }),
+          headers: {
+            "Content-Type": 'application/json'
+          }
+        }).then(function() {
+          $location.path("/products");
+        });
+      }
+    });
+
+    coffeeway.config(function($routeProvider) {
+      $routeProvider
+      .when('/configuration', {
+        templateUrl: '/content/configuration',
+        controller: 'ConfigurationCtrl',
+        section: 'configuration',
+        title: 'Configuration'
+      })
+      .when('/dashboard', {
+        templateUrl: '/content/dashboard',
+        controller: 'DashboardCtrl',
+        section: 'dashboard',
+        title: 'Dashboard'
+      })
+      .when('/offices', {
+        templateUrl: '/content/offices/list',
+        controller: 'OfficesCtrl',
+        section: 'offices',
+        title: 'Offices'
+      })
+      .when('/offices/form', {
+        templateUrl: '/content/offices/form',
+        controller: 'OfficeFormCtrl',
+        section: 'offices',
+        title: 'Office form'
+      })
+      .when('/offices/:officeId/form', {
+        templateUrl: '/content/offices/form',
+        controller: 'OfficeFormCtrl',
+        section: 'offices',
+        title: 'Office form'
+      })
+      .when('/products', {
+        templateUrl: '/content/products/list',
+        controller: 'ProductsCtrl',
+        section: 'products',
+        title: 'Products'
+      })
+      .when('/products/form', {
+        templateUrl: '/content/products/form',
+        controller: 'ProductFormCtrl',
+        section: 'products',
+        title: 'Product form'
+      })
+      .when('/products/:productId/form', {
+        templateUrl: '/content/products/form',
+        controller: 'ProductFormCtrl',
+        section: 'products',
+        title: 'Product form'
+      })
+      .when('/orders', {
+        templateUrl: '/content/orders/list',
+        controller: 'OrdersCtrl',
+        section: 'orders',
+        title: 'Orders'
+      })
+      .when('/orders/form', {
+        templateUrl: '/content/orders/form',
+        controller: 'OrderFormCtrl',
+        section: 'orders',
+        title: 'Order form'
+      })
+      .otherwise({
+        "redirectTo": "/dashboard"
+      });
+    });
+  </script>
+</head>
+<body>
+   <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">CoffeeWay</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li id="navigation-item-dashboard"><a href="#dashboard">Dashboard</a></li>
+            <li id="navigation-item-offices"><a href="#/offices">Offices</a></li>
+            <li id="navigation-item-products"><a href="#/products">Products</a></li>
+            <li id="navigation-item-orders"><a href="#/orders">Orders</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li id="navigation-item-configuration"><a href="#/configuration"><b><%= configuration %></b></a></li>
+        </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+      <div ng-view></div>
+    </div> <!-- /container -->
+</body>
+</html>
